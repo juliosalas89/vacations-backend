@@ -1,5 +1,6 @@
 import mysql from "../adapters/mysql";
 import { v4 } from "uuid";
+import moment from "moment";
 import { 
     getVacationsQuery, 
     insertVacationQuery, 
@@ -18,14 +19,16 @@ const getVacationsModel = ({conn, ...rest})=> {
 }
 
 const postVacationModel = ({conn, ...rest})=> {
+    const created = moment.utc().format("YYYY-MM-DD HH:mm:ss");
     const new_uuid = v4();
     return mysql
-        .execute(insertVacationQuery({...rest, new_uuid}), conn, {...rest, new_uuid});
+        .execute(insertVacationQuery({...rest, created, new_uuid}), conn, {...rest, created, new_uuid});
 }
 
 const deleteVacationModel = ({conn, ...rest}) => {
+    const deleted = moment.utc().format("YYYY-MM-DD HH:mm:ss");
     return mysql
-    .execute(deleteVacationQuery({...rest}), conn, {...rest})
+    .execute(deleteVacationQuery({...rest, deleted}), conn, {...rest, deleted})
 }
 
 const updateVacationModel = ({conn, ...rest}) => {

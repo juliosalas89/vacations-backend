@@ -13,7 +13,7 @@ const getVacationsQuery = ({ person, vacation }) => {
 
 const insertVacationQuery = ({ name, new_uuid }) => {
     return `
-        INSERT INTO vacations.vacations (uuid, persons_id, place, date_start, date_end, rating, all_inclusive) 
+        INSERT INTO vacations.vacations (uuid, persons_id, place, date_start, date_end, rating, all_inclusive, created) 
         VALUES (
             :new_uuid, 
             (SELECT vacations.persons.id
@@ -21,9 +21,10 @@ const insertVacationQuery = ({ name, new_uuid }) => {
                 WHERE uuid = :uuid), 
             :place, 
             :dateStart, 
-            :dateEnd, 
+            :dateEnd,
             :rating, 
-            :allInclusive);`
+            :allInclusive,
+            :created);`
 }
 
 const deleteVacationQuery = ({ uuid }) => {
@@ -32,7 +33,7 @@ const deleteVacationQuery = ({ uuid }) => {
         UPDATE 
         vacations.vacations
         SET 
-        vacations.deleted = '2022-08-08'
+        vacations.deleted = :deleted
         WHERE 
         vacations.uuid = :uuid;
     `
