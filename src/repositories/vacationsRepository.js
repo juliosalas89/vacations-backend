@@ -2,7 +2,7 @@ const getVacationsQuery = ({ person, vacation }) => {
     const personFilter = person ? ` AND persons.name = :person` : '';
     const vacationFilter = vacation ? ` AND vacations.place = :vacation` : '';
     return `
-        SELECT vacations.*, persons.*
+        SELECT vacations.*, persons.name AS persons_name, persons.uuid AS person_uuid 
         FROM vacations.vacations
         LEFT JOIN vacations.persons ON persons.id = vacations.persons_id
         WHERE
@@ -28,12 +28,11 @@ const insertVacationQuery = ({ name, new_uuid }) => {
 }
 
 const deleteVacationQuery = ({ uuid }) => {
-    console.log(uuid)
     return `
         UPDATE 
         vacations.vacations
         SET 
-        vacations.deleted = :deleted
+        vacations.deleted = :deletedData
         WHERE 
         vacations.uuid = :uuid;
     `

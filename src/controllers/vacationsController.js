@@ -15,7 +15,6 @@ const getVacationsController = (req, res, next, config) => {
 
     getVacationsModel({...req.query, conn})
     .then(response => {
-        console.log(response)
         if(noResultsGet(response)) {
             const err = error404();
             const error = errorHandler(err, config.enviroment);
@@ -43,10 +42,9 @@ const postVacationsController = (req, res, next, config) => {
 //DELETE CONTROLLER
 const deleteVacationController = (req, res, next, config)=> {
     const conn = mysql.start(config)
-    deleteVacationModel({...req.params, conn})
+    deleteVacationModel({...req.params, ...req.body, conn})
     .then(response => {
         if(noResultsPut(response)) {
-            console.log(response)
             const err = error404();
             const error = errorHandler(err, config.enviroment);
             return sendResponseNotFound(res, error);
@@ -61,11 +59,9 @@ const deleteVacationController = (req, res, next, config)=> {
 //PUT CONTROLLER
 const updateVacationController = (req, res, next, config) => {
     const conn = mysql.start(config)
-    console.log(req.body)
     updateVacationModel({...req.params, ...req.body, conn})
     .then(response => {
         if(noResultsPut(response)) {
-            console.log(response)
             const err = error404();
             const error = errorHandler(err, config.enviroment);
             return sendResponseNotFound(res, error);

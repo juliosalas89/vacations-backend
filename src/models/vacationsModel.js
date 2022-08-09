@@ -25,10 +25,10 @@ const postVacationModel = ({conn, ...rest})=> {
         .execute(insertVacationQuery({...rest, created, new_uuid}), conn, {...rest, created, new_uuid});
 }
 
-const deleteVacationModel = ({conn, ...rest}) => {
-    const deleted = moment.utc().format("YYYY-MM-DD HH:mm:ss");
+const deleteVacationModel = ({conn, deleted, ...rest}) => {
+    const deletedData = deleted === null ? null : moment.utc().format("YYYY-MM-DD HH:mm:ss");
     return mysql
-    .execute(deleteVacationQuery({...rest, deleted}), conn, {...rest, deleted})
+    .execute(deleteVacationQuery({...rest, deletedData}), conn, {...rest, deletedData})
 }
 
 const updateVacationModel = ({conn, ...rest}) => {

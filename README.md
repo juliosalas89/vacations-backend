@@ -20,7 +20,9 @@ model:
 
 # Method: DELETE/PUT -- Route: /vacation/uuid
 
-DELETE: changes "deleted" value to the current date, when the query is sent. ("deleted" default value is "null").
+DELETE: 
+1- With no body changes "deleted" value to the current date, when the query is sent. ("deleted" default value is "null").
+2- With object { delted: null } in the body  changes "deleted" value to null, so the information is no longer deleted.
 
 PUT: Change atributes on an existing object.
 options:
