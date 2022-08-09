@@ -1,6 +1,4 @@
 const getVacationsQuery = ({ person, vacation }) => {
-    console.log(person)
-    console.log(vacation)
     const personFilter = person ? ` AND persons.name = :person` : '';
     const vacationFilter = vacation ? ` AND vacations.place = :vacation` : '';
     return `
@@ -40,13 +38,13 @@ const deleteVacationQuery = ({ uuid }) => {
     `
 }
 
-const updateVacationQuery = ({ place, date_start, date_end, rating, all_inclusive, uuid }) => {
+const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive, uuid }) => {
 
     const placeUpdate = place ? `vacations.place = :place` : '',
-        dateStartUpdate = date_start ? `vacations.date_start = :date_start` : '',
-        dateEndUpdate = date_end ? `vacations.date_end = :date_end` : '',
+        dateStartUpdate = dateStart ? `vacations.date_start = :dateStart` : '',
+        dateEndUpdate = dateEnd ? `vacations.date_end = :dateEnd` : '',
         ratingUpdate = rating ? `vacations.rating = :rating` : '',
-        allInclusiveUpdate = all_inclusive ? `vacations.all_inclusive = :all_inclusive` : '';
+        allInclusiveUpdate = allInclusive < 2 ? `vacations.all_inclusive = :allInclusive` : '';
 
     const querySetString = [placeUpdate, dateStartUpdate, dateEndUpdate, ratingUpdate, allInclusiveUpdate].reduce((acc, item) => {
         return (item !== '' && acc !== '') ? (acc + ', ' + item) : (acc + item);
