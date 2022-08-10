@@ -3,6 +3,7 @@ import { error404, errorHandler } from '../utils/errors';
 import { noResults } from '../validators/resultsValidator';
 import {
     getVacationsModel,
+    countVacationsModel,
     getUuidModel,
     postVacationModel,
     deleteVacationModel,
@@ -13,15 +14,33 @@ import { sendResponseNotFound } from '../utils/responses';
 //GET CONTROLLER
 const getVacationsController = (req, res, next, config) => {
     const conn = mysql.start(config);
+    console.log('desde controller')
 
-    getVacationsModel({ ...req.query, conn })
-        .then(response => {
-            const result = {
-                _data: { response }
-            }
-            next(result);
-
+    Promise.all([
+        getVacationsModel({ ...req.query, conn }),
+        countVacationsModel({ ...req.query, conn })
+    ])
+        .then(([getResults, countResults]) => {
+            console.log("getResults: ")
+            console.log(getResults)
+            console.log("countResults: ")
+            console.log(countResults)
+            next({
+                _data: {vacations: getResults},
+                _page: {
+                    totalElements: countResults,
+                    limit: req.query.limit || 100,
+                    page: req.params.page || (countResults && 1) || 0 
+                }
+            })
         })
+        // .then(response => {
+        //     const result = {
+        //         _data: { response }
+        //     }
+        //     next(result);
+
+        // })
         .catch((err) => {
             const error = errorHandler(err, config.environment);
             res.status(error.code).json(error);

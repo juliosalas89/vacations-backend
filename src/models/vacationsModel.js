@@ -6,7 +6,8 @@ import {
     getUuidQuery,
     insertVacationQuery,
     deleteVacationQuery,
-    updateVacationQuery
+    updateVacationQuery,
+    countVacationsQuery
 } from "../repositories/vacationsRepository";
 
 
@@ -18,6 +19,12 @@ const getVacationsModel = ({ conn, ...rest }) => {
         .execute(getVacationsQuery(paramsToSearch), conn, paramsToSearch)
         .then(queryResult => queryResult.map(({ id, persons_id, deleted, created, ...resultFiltered }) => resultFiltered));
 };
+
+const countVacationsModel = ({ conn, ...rest }) => {
+    return mysql
+    .execute(countVacationsQuery(rest), conn, rest)
+    .then(results => results[0].count);
+}
 
 const getUuidModel = ({ conn, ...rest }) => {
     return mysql
@@ -47,6 +54,7 @@ const updateVacationModel = ({ conn, ...rest }) => {
 
 export {
     getVacationsModel,
+    countVacationsModel,
     getUuidModel,
     postVacationModel,
     deleteVacationModel,

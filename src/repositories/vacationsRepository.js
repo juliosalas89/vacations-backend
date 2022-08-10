@@ -1,15 +1,46 @@
-const getVacationsQuery = ({ person, vacation }) => {
+import { pagination } from "../utils/pagination";
+
+const _vacationsQuery = (_pagination = '') => ({ count }) => ({ person, vacation }) => {
+    console.log("count: ")
+    console.log(count)
     const personFilter = person ? ` AND persons.name = :person` : '';
     const vacationFilter = vacation ? ` AND vacations.place = :vacation` : '';
     return `
-        SELECT vacations.*, persons.name AS persons_name, persons.uuid AS person_uuid 
-        FROM vacations.vacations
-        LEFT JOIN vacations.persons ON persons.id = vacations.persons_id
+        SELECT 
+            ${count || "vacations.*, persons.name AS persons_name, persons.uuid AS person_uuid"} 
+        FROM 
+            vacations.vacations
+        LEFT JOIN 
+            vacations.persons 
+        ON 
+            persons.id = vacations.persons_id
         WHERE
-        true
-        ${personFilter}
-        ${vacationFilter};`
-}
+            vacations.deleted IS NULL
+        AND
+            true
+            ${personFilter}
+            ${vacationFilter}
+            ${_pagination}
+        ;
+    `
+};
+
+const getVacationsQuery = ({limit, page, person, vacation }) => _vacationsQuery(pagination({limit, page}))({count: false})({ person, vacation });
+const countVacationsQuery = (rest) => _vacationsQuery()({ count: 'COUNT(*) AS count' })(rest);
+
+
+// const getVacationsQuery = ({ person, vacation }) => {
+//     const personFilter = person ? ` AND persons.name = :person` : '';
+//     const vacationFilter = vacation ? ` AND vacations.place = :vacation` : '';
+//     return `
+//         SELECT vacations.*, persons.name AS persons_name, persons.uuid AS person_uuid 
+//         FROM vacations.vacations
+//         LEFT JOIN vacations.persons ON persons.id = vacations.persons_id
+//         WHERE
+//         true
+//         ${personFilter}
+//         ${vacationFilter};`
+// };
 
 const getUuidQuery = () => {
     
@@ -18,7 +49,7 @@ const getUuidQuery = () => {
     FROM vacations.vacations
     WHERE uuid = :uuid
     `
-}
+};
 
 const insertVacationQuery = ({ name, new_uuid }) => {
     return `
@@ -39,7 +70,7 @@ const insertVacationQuery = ({ name, new_uuid }) => {
         FROM vacations.vacations
         WHERE uuid = :new_uuid
         `
-}
+};
 
 const deleteVacationQuery = ({ uuid }) => {
     return `
@@ -50,7 +81,7 @@ const deleteVacationQuery = ({ uuid }) => {
         WHERE 
         vacations.uuid = :uuid;
     `
-}
+};
 
 const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive, uuid }) => {
 
@@ -76,10 +107,11 @@ const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive, 
         FROM vacations.vacations
         WHERE uuid = :uuid
     `
-}
+};
 
 export {
     getVacationsQuery,
+    countVacationsQuery,
     getUuidQuery,
     insertVacationQuery,
     deleteVacationQuery,
