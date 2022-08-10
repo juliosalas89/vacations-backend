@@ -1,6 +1,6 @@
 import mysql from '../adapters/mysql';
 import { error404, errorHandler } from '../utils/errors';
-import { noResults, noResultsPut } from '../validators/resultsValidator';
+import { noResults } from '../validators/resultsValidator';
 import {
     getVacationsModel,
     countVacationsModel,
