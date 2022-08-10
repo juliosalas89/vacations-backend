@@ -11,6 +11,15 @@ const getVacationsQuery = ({ person, vacation }) => {
         ${vacationFilter};`
 }
 
+const getUuidQuery = () => {
+    
+    return `
+    SELECT *
+    FROM vacations.vacations
+    WHERE uuid = :uuid
+    `
+}
+
 const insertVacationQuery = ({ name, new_uuid }) => {
     return `
         INSERT INTO vacations.vacations (uuid, persons_id, place, date_start, date_end, rating, all_inclusive, created) 
@@ -24,7 +33,12 @@ const insertVacationQuery = ({ name, new_uuid }) => {
             :dateEnd,
             :rating, 
             :allInclusive,
-            :created);`
+            :created);
+        
+        SELECT *
+        FROM vacations.vacations
+        WHERE uuid = :new_uuid
+        `
 }
 
 const deleteVacationQuery = ({ uuid }) => {
@@ -52,16 +66,21 @@ const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive, 
 
     return `
         UPDATE 
-        vacations.vacations
+            vacations.vacations
         SET 
-        ${querySetString}
+            ${querySetString}
         WHERE 
-        vacations.uuid = :uuid;
+            vacations.uuid = :uuid;
+        
+        SELECT *
+        FROM vacations.vacations
+        WHERE uuid = :uuid
     `
 }
 
 export {
     getVacationsQuery,
+    getUuidQuery,
     insertVacationQuery,
     deleteVacationQuery,
     updateVacationQuery

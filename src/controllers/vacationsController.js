@@ -1,81 +1,123 @@
 import mysql from '../adapters/mysql';
 import { error404, errorHandler } from '../utils/errors';
-import { noResults, noResultsGet, noResultsPut } from '../validators/resultsValidator';
-import { 
-    getVacationsModel, 
-    postVacationModel, 
-    deleteVacationModel, 
-    updateVacationModel 
+import { noResults } from '../validators/resultsValidator';
+import {
+    getVacationsModel,
+    getUuidModel,
+    postVacationModel,
+    deleteVacationModel,
+    updateVacationModel
 } from "../models/vacationsModel";
-import { sendOkResponse, sendResponseNotFound } from '../utils/responses';
+import { sendResponseNotFound } from '../utils/responses';
 
 //GET CONTROLLER
 const getVacationsController = (req, res, next, config) => {
     const conn = mysql.start(config);
 
-    getVacationsModel({...req.query, conn})
-    .then(response => {
-        if(noResultsGet(response)) {
-            const err = error404();
-            const error = errorHandler(err, config.enviroment);
-            return sendResponseNotFound(res, error);
-        }
-        return sendOkResponse(response, req , res)
-    })
-    .catch((error) => {
-        console.log(error);
-    })
+    getVacationsModel({ ...req.query, conn })
+        .then(response => {
+            const result = {
+                _data: { response }
+            }
+            next(result);
+
+        })
+        .catch((err) => {
+            const error = errorHandler(err, config.environment);
+            res.status(error.code).json(error);
+        })
+        .finally(() => {
+            mysql.end(conn);
+        })
+}
+
+//GET by UUID CONTROLER TERMINAR
+const getUuidController = (req, res, next, config) => {
+    const conn = mysql.start(config);
+
+    getUuidModel({ ...req.params, conn })
+        .then(response => {
+            if (noResults(response)) {
+                const err = error404();
+                const error = errorHandler(err, config.enviroment);
+                return sendResponseNotFound(res, error);
+            }
+            const result = {
+                _data: { response }
+            }
+            next(result);
+
+        })
+        .catch((err) => {
+            const error = errorHandler(err, config.environment);
+            res.status(error.code).json(error);
+        })
+        .finally(() => {
+            mysql.end(conn);
+        })
 }
 
 //POST CONTROLLER
-const postVacationsController = (req, res, next, config) => { 
+const postVacationsController = (req, res, next, config) => {
     const conn = mysql.start(config);
-    postVacationModel({...req.body, conn})
-    .then(() => {
-        res.status(201).send({message: 'Vacation saved'});
-    })
-    .catch((error)=> {
-        console.log(error);
-    })
+    postVacationModel({ ...req.body, conn })
+        .then(arrResponse => {
+            const response = arrResponse[1][0]
+            const result = {
+                _data: { response }
+            }
+            next(result);
+        })
+        .catch((err) => {
+            const error = errorHandler(err, config.environment);
+            res.status(error.code).json(error);
+        })
+        .finally(() => {
+            mysql.end(conn);
+        })
 }
 
 //DELETE CONTROLLER
-const deleteVacationController = (req, res, next, config)=> {
+const deleteVacationController = (req, res, next, config) => {
     const conn = mysql.start(config)
-    deleteVacationModel({...req.params, ...req.body, conn})
-    .then(response => {
-        if(noResultsPut(response)) {
-            const err = error404();
-            const error = errorHandler(err, config.enviroment);
-            return sendResponseNotFound(res, error);
-        }
-        return sendOkResponse(response, req , res)
-    })
-    .catch((error)=> {
-        console.log(error);
-    })
+    deleteVacationModel({ ...req.params, ...req.body, conn })
+        .then(() => {
+            const result = {};
+            next(result);
+        })
+        .catch((err) => {
+            const error = errorHandler(err, config.environment);
+            res.status(error.code).json(error);
+        })
+        .finally(() => {
+            mysql.end(conn);
+        })
 }
 
 //PUT CONTROLLER
 const updateVacationController = (req, res, next, config) => {
     const conn = mysql.start(config)
-    updateVacationModel({...req.params, ...req.body, conn})
-    .then(response => {
-        if(noResultsPut(response)) {
-            const err = error404();
-            const error = errorHandler(err, config.enviroment);
-            return sendResponseNotFound(res, error);
-        }
-        return sendOkResponse(response, req , res)
-    })
-    .catch((error)=> {
-        console.log(error);
-    })
+    updateVacationModel({ ...req.params, ...req.body, conn })
+        .then(arrResponse => {
+            const response = arrResponse[0]
+            const result = {
+                _data: { response }
+            }
+            next(result);
+        })
+        .catch((err) => {
+            const error = errorHandler(err, config.environment);
+            res.status(error.code).json(error);
+        })
+        .finally(() => {
+            mysql.end(conn);
+        })
 }
 
 export {
-    getVacationsController, 
-    postVacationsController, 
+    getVacationsController,
+    postVacationsController,
     deleteVacationController,
-    updateVacationController
+    updateVacationController,
+    getUuidController
 };

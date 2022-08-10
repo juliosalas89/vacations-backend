@@ -2,6 +2,10 @@ const errorHandler = (err, environment) => {
     const responseJson = {}
 
     switch (err.code) {
+        case "ER_DUP_ENTRY":
+            responseJson.message = "Conflict";
+            responseJson.code = 409;
+            break;
         case "BAD_REQUEST":
             responseJson.message = "Bad Request";
             responseJson.code = 400;
