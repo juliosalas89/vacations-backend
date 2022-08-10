@@ -30,7 +30,7 @@ const postVacationModel = ({ conn, ...rest }) => {
     const uuid = v4();
     return mysql
         .execute(insertVacationQuery({ ...rest, created, uuid }), conn, { ...rest, created, uuid })
-        .then(queryResult => queryResult.map(({ id, persons_id, deleted, created, ...resultFiltered }) => resultFiltered));
+        .then(queryResult => queryResult[1].map(({ id, persons_id, deleted, created, ...resultFiltered }) => resultFiltered));
 };
 
 const deleteVacationModel = ({ conn, deleted, ...rest }) => {

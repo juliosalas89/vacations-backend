@@ -9,7 +9,7 @@ import {
     getUuidController,
     postVacationsController,
     deleteVacationController,
-    updateVacationController
+    putVacationController
 } from "../controllers/vacationsController";
 
 export default (config) => {
@@ -81,7 +81,7 @@ export default (config) => {
             check('allInclusive').optional().notEmpty().isBoolean()
         ],
         (req, res, next) => payloadExpressValidator(req, res, next, config),
-        (req, res, next) => updateVacationController(req, res, next, config),
+        (req, res, next) => putVacationController(req, res, next, config),
         (result, req, res, next) => sendCreatedReponse(result, req, res)
     );
 
