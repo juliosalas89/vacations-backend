@@ -1,5 +1,8 @@
 import { Router } from "express";
 import { indexController } from "../controllers/indexController";
+import { sendCreatedReponse, sendOkResponse, sendResponseNoContent } from "../utils/responses";
+import { payloadExpressValidator } from "../validators/payloadExpressValidator";
+import { isValidDate, isValidDeleted, isValidRating } from "../validators/customValidators";
 import { check, param } from "express-validator";
 import {
     getVacationsController,
@@ -8,9 +11,6 @@ import {
     deleteVacationController,
     updateVacationController
 } from "../controllers/vacationsController";
-import { sendCreatedReponse, sendOkResponse, sendResponseNoContent } from "../utils/responses";
-import { payloadExpressValidator } from "../validators/payloadExpressValidator";
-import { isValidDate, isValidDeleted, isValidRating } from "../validators/customValidators";
 
 export default (config) => {
     const routes = Router();
