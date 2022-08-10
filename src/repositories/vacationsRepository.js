@@ -1,10 +1,9 @@
 import { pagination } from "../utils/pagination";
 
-const _vacationsQuery = (_pagination = '') => ({ count }) => ({ person, vacation }) => {
-    console.log("count: ")
-    console.log(count)
-    const personFilter = person ? ` AND persons.name = :person` : '';
-    const vacationFilter = vacation ? ` AND vacations.place = :vacation` : '';
+const _vacationsQuery = (_pagination = '') => ({ count }) => ({ person, vacation, uuid  }) => {
+    const uuidFilter = uuid ? ` AND vacations.uuid = :uuid` : '';
+    const personFilter = person ? ` AND persons.name LIKE CONCAT('%',:person,'%')` : '';
+    const vacationFilter = vacation ? ` AND vacations.place LIKE CONCAT('%',:vacation,'%')` : '';
     return `
         SELECT 
             ${count || "vacations.*, persons.name AS persons_name, persons.uuid AS person_uuid"} 
@@ -20,45 +19,24 @@ const _vacationsQuery = (_pagination = '') => ({ count }) => ({ person, vacation
             true
             ${personFilter}
             ${vacationFilter}
+            ${uuidFilter}
             ${_pagination}
         ;
     `
 };
 
-const getVacationsQuery = ({limit, page, person, vacation }) => _vacationsQuery(pagination({limit, page}))({count: false})({ person, vacation });
+const getVacationsQuery = ({limit, page, person, vacation, uuid }) => _vacationsQuery(pagination({limit, page}))({count: false})({ person, vacation, uuid });
+
 const countVacationsQuery = (rest) => _vacationsQuery()({ count: 'COUNT(*) AS count' })(rest);
 
-
-// const getVacationsQuery = ({ person, vacation }) => {
-//     const personFilter = person ? ` AND persons.name = :person` : '';
-//     const vacationFilter = vacation ? ` AND vacations.place = :vacation` : '';
-//     return `
-//         SELECT vacations.*, persons.name AS persons_name, persons.uuid AS person_uuid 
-//         FROM vacations.vacations
-//         LEFT JOIN vacations.persons ON persons.id = vacations.persons_id
-//         WHERE
-//         true
-//         ${personFilter}
-//         ${vacationFilter};`
-// };
-
-const getUuidQuery = () => {
-    
-    return `
-    SELECT *
-    FROM vacations.vacations
-    WHERE uuid = :uuid
-    `
-};
-
-const insertVacationQuery = ({ name, new_uuid }) => {
+const insertVacationQuery = () => {
     return `
         INSERT INTO vacations.vacations (uuid, persons_id, place, date_start, date_end, rating, all_inclusive, created) 
         VALUES (
-            :new_uuid, 
+            :uuid, 
             (SELECT vacations.persons.id
                 FROM vacations.persons
-                WHERE uuid = :uuid), 
+                WHERE uuid = :personsUuid), 
             :place, 
             :dateStart, 
             :dateEnd,
@@ -68,7 +46,7 @@ const insertVacationQuery = ({ name, new_uuid }) => {
         
         SELECT *
         FROM vacations.vacations
-        WHERE uuid = :new_uuid
+        WHERE uuid = :uuid
         `
 };
 
@@ -85,11 +63,11 @@ const deleteVacationQuery = ({ uuid }) => {
 
 const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive, uuid }) => {
 
-    const placeUpdate = place ? `vacations.place = :place` : '',
-        dateStartUpdate = dateStart ? `vacations.date_start = :dateStart` : '',
-        dateEndUpdate = dateEnd ? `vacations.date_end = :dateEnd` : '',
-        ratingUpdate = rating ? `vacations.rating = :rating` : '',
-        allInclusiveUpdate = allInclusive < 2 ? `vacations.all_inclusive = :allInclusive` : '';
+    const placeUpdate = place ? `vacations.place = :place` : '';
+    const dateStartUpdate = dateStart ? `vacations.date_start = :dateStart` : '';
+    const dateEndUpdate = dateEnd ? `vacations.date_end = :dateEnd` : '';
+    const ratingUpdate = rating ? `vacations.rating = :rating` : '';
+    const allInclusiveUpdate = allInclusive < 2 ? `vacations.all_inclusive = :allInclusive` : '';
 
     const querySetString = [placeUpdate, dateStartUpdate, dateEndUpdate, ratingUpdate, allInclusiveUpdate].reduce((acc, item) => {
         return (item !== '' && acc !== '') ? (acc + ', ' + item) : (acc + item);
@@ -112,7 +90,6 @@ const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive, 
 export {
     getVacationsQuery,
     countVacationsQuery,
-    getUuidQuery,
     insertVacationQuery,
     deleteVacationQuery,
     updateVacationQuery

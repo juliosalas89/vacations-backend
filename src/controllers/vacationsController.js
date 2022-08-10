@@ -14,17 +14,11 @@ import { sendResponseNotFound } from '../utils/responses';
 //GET CONTROLLER
 const getVacationsController = (req, res, next, config) => {
     const conn = mysql.start(config);
-    console.log('desde controller')
-
     Promise.all([
         getVacationsModel({ ...req.query, conn }),
         countVacationsModel({ ...req.query, conn })
     ])
         .then(([getResults, countResults]) => {
-            console.log("getResults: ")
-            console.log(getResults)
-            console.log("countResults: ")
-            console.log(countResults)
             next({
                 _data: {vacations: getResults},
                 _page: {
@@ -34,13 +28,6 @@ const getVacationsController = (req, res, next, config) => {
                 }
             })
         })
-        // .then(response => {
-        //     const result = {
-        //         _data: { response }
-        //     }
-        //     next(result);
-
-        // })
         .catch((err) => {
             const error = errorHandler(err, config.environment);
             res.status(error.code).json(error);
@@ -54,8 +41,8 @@ const getVacationsController = (req, res, next, config) => {
 const getUuidController = (req, res, next, config) => {
     const conn = mysql.start(config);
 
-    getUuidModel({ ...req.params, conn })
-        .then(response => {
+    getVacationsModel({ ...req.params, conn })
+    .then(response => {
             if (noResults(response)) {
                 const err = error404();
                 const error = errorHandler(err, config.enviroment);
@@ -75,6 +62,30 @@ const getUuidController = (req, res, next, config) => {
             mysql.end(conn);
         })
 }
+// const getUuidController = (req, res, next, config) => {
+//     const conn = mysql.start(config);
+
+//     getUuidModel({ ...req.params, conn })
+//         .then(response => {
+//             if (noResults(response)) {
+//                 const err = error404();
+//                 const error = errorHandler(err, config.enviroment);
+//                 return sendResponseNotFound(res, error);
+//             }
+//             const result = {
+//                 _data: { response }
+//             }
+//             next(result);
+
+//         })
+//         .catch((err) => {
+//             const error = errorHandler(err, config.environment);
+//             res.status(error.code).json(error);
+//         })
+//         .finally(() => {
+//             mysql.end(conn);
+//         })
+// }
 
 //POST CONTROLLER
 const postVacationsController = (req, res, next, config) => {

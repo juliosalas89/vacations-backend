@@ -3,7 +3,6 @@ import { v4 } from "uuid";
 import moment from "moment";
 import {
     getVacationsQuery,
-    getUuidQuery,
     insertVacationQuery,
     deleteVacationQuery,
     updateVacationQuery,
@@ -26,17 +25,11 @@ const countVacationsModel = ({ conn, ...rest }) => {
     .then(results => results[0].count);
 }
 
-const getUuidModel = ({ conn, ...rest }) => {
-    return mysql
-        .execute(getUuidQuery({ ...rest }), conn, { ...rest })
-        .then(queryResult => queryResult.map(({ id, persons_id, deleted, created, ...resultFiltered }) => resultFiltered));
-};
-
 const postVacationModel = ({ conn, ...rest }) => {
     const created = moment.utc().format("YYYY-MM-DD HH:mm:ss");
-    const new_uuid = v4();
+    const uuid = v4();
     return mysql
-        .execute(insertVacationQuery({ ...rest, created, new_uuid }), conn, { ...rest, created, new_uuid })
+        .execute(insertVacationQuery({ ...rest, created, uuid }), conn, { ...rest, created, uuid })
         .then(queryResult => queryResult.map(({ id, persons_id, deleted, created, ...resultFiltered }) => resultFiltered));
 };
 
@@ -55,7 +48,6 @@ const updateVacationModel = ({ conn, ...rest }) => {
 export {
     getVacationsModel,
     countVacationsModel,
-    getUuidModel,
     postVacationModel,
     deleteVacationModel,
     updateVacationModel

@@ -3,7 +3,7 @@ import { indexController } from "../controllers/indexController";
 import { sendCreatedReponse, sendOkResponse, sendResponseNoContent } from "../utils/responses";
 import { payloadExpressValidator } from "../validators/payloadExpressValidator";
 import { isValidDate, isValidDeleted, isValidRating } from "../validators/customValidators";
-import { check, param } from "express-validator";
+import { check, param, query } from "express-validator";
 import {
     getVacationsController,
     getUuidController,
@@ -23,7 +23,13 @@ export default (config) => {
 
     //GET ALL VACATIONS OR GET VACATIONS BY PLACE OR PERSON
     routes.get('/vacation',
-        //query check
+        [
+            query('limit').optional().isInt(),
+            query('page').optional().isInt(),
+            query('person').optional().isString(),
+            query('vacation').optional().isString(),
+        ],
+        (req, res, next) => payloadExpressValidator(req, res, next, config),
         (req, res, next) => getVacationsController(req, res, next, config),
         (result, req, res, next) => sendOkResponse(result, req, res),
 
@@ -41,7 +47,7 @@ export default (config) => {
     //SAVE NEW VACATION ASOCIATED TO A PERSON
     routes.post('/vacation',
         [
-            check('uuid').notEmpty().isString(),
+            check('personsUuid').notEmpty().isString(),
             check('place').notEmpty().isString(),
             check('dateStart').notEmpty().custom(isValidDate),
             check('dateEnd').notEmpty().custom(isValidDate),
