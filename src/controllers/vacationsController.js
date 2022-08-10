@@ -41,14 +41,14 @@ const getUuidController = (req, res, next, config) => {
     const conn = mysql.start(config);
 
     getVacationsModel({ ...req.params, conn })
-    .then(response => {
-            if (noResults(response)) {
+    .then(vacations => {
+            if (noResults(vacations)) {
                 const err = error404();
                 const error = errorHandler(err, config.enviroment);
                 return sendResponseNotFound(res, error);
             }
             const result = {
-                _data: { response }
+                _data: { vacations }
             }
             next(result);
 
@@ -67,9 +67,9 @@ const postVacationsController = (req, res, next, config) => {
     const conn = mysql.start(config);
     console.log('desde controller')
     postVacationModel({ ...req.body, conn })
-        .then(response => {
+        .then(vacations => {
             const result = {
-                _data: { response }
+                _data: { vacations }
             }
             next(result);
         })
@@ -103,14 +103,14 @@ const deleteVacationController = (req, res, next, config) => {
 const putVacationController = (req, res, next, config) => {
     const conn = mysql.start(config)
     updateVacationModel({ ...req.params, ...req.body, conn })
-        .then(response => {
-            if (noResults(response)) {
+        .then(vacations => {
+            if (noResults(vacations)) {
                 const err = error404();
                 const error = errorHandler(err, config.enviroment);
                 return sendResponseNotFound(res, error);
             }
             const result = {
-                _data: { response }
+                _data: { vacations }
             }
             next(result);
         })
