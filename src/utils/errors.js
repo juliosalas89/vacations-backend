@@ -10,7 +10,7 @@ const errorHandler = (err, environment) => {
             responseJson.message = "Bad Request";
             responseJson.code = 400;
             break;
-        case "UNPROCESABLE_ENTITY":
+        case "UNPROCESSABLE_ENTITY":
             responseJson.message = "Unprocesable Entity";
             responseJson.code = 422;
             break;

@@ -6,7 +6,7 @@ const _vacationsQuery = (_pagination = '') => ({ count }) => ({ person, vacation
     const vacationFilter = vacation ? ` AND vacations.place LIKE CONCAT('%',:vacation,'%')` : '';
     return `
         SELECT 
-            ${count || "vacations.*, persons.name AS persons_name, persons.uuid AS person_uuid"} 
+            ${count || "vacations.*, persons.name AS persons_name, persons.uuid AS persons_uuid"} 
         FROM 
             vacations.vacations
         LEFT JOIN 
@@ -34,7 +34,7 @@ const insertVacationQuery = () => {
         INSERT INTO vacations.vacations (uuid, persons_id, place, date_start, date_end, rating, all_inclusive, created) 
         VALUES (
             :uuid, 
-            (SELECT vacations.persons.id
+            (SELECT id
                 FROM vacations.persons
                 WHERE uuid = :personsUuid), 
             :place, 
@@ -50,7 +50,7 @@ const insertVacationQuery = () => {
         `
 };
 
-const deleteVacationQuery = ({ uuid }) => {
+const deleteVacationQuery = () => {
     return `
         UPDATE 
         vacations.vacations
@@ -61,7 +61,7 @@ const deleteVacationQuery = ({ uuid }) => {
     `
 };
 
-const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive, uuid }) => {
+const updateVacationQuery = ({ place, dateStart, dateEnd, rating, allInclusive }) => {
 
     const placeUpdate = place ? `vacations.place = :place` : '';
     const dateStartUpdate = dateStart ? `vacations.date_start = :dateStart` : '';

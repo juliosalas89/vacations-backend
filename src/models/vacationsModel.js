@@ -12,10 +12,9 @@ import {
 
 
 const getVacationsModel = ({ conn, ...rest }) => {
-    const paramsToSearch = { ...rest };
 
     return mysql
-        .execute(getVacationsQuery(paramsToSearch), conn, paramsToSearch)
+        .execute(getVacationsQuery(rest), conn, rest)
         .then(queryResult => queryResult.map(({ id, persons_id, deleted, created, ...resultFiltered }) => resultFiltered));
 };
 

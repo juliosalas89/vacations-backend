@@ -7,11 +7,11 @@ const payloadExpressValidator = (req, res, next, config) => {
         const badRequest = errors.array().find(val => val.value === undefined);
 
         if (badRequest) {
-            const errorMessage = errorHandler({errors: errors.array(), code: 'BAD_REQUEST'}, config.environment);
+            const errorMessage = errorHandler({errors: errors.array(), code: "BAD_REQUEST"}, config.environment);
             return res.status(errorMessage.code).json(errorMessage);
         }
 
-        const error = errorHandler({errors: errors.array(), code: 'UNPROCESSABLE_ENTITY'}, config.environment);
+        const error = errorHandler({errors: errors.array(), code: "UNPROCESSABLE_ENTITY"}, config.environment);
         return res.status(error.code).json(error);
     }
 

@@ -73,7 +73,6 @@ export default (config) => {
     //MODIFY EXISTING VACATION REGISTER
     routes.put('/vacation/:uuid',
         [
-            check('uuid').optional().notEmpty().isString(),
             check('place').optional().notEmpty().isString(),
             check('dateStart').optional().notEmpty().custom(isValidDate),
             check('dateEnd').optional().notEmpty().custom(isValidDate),

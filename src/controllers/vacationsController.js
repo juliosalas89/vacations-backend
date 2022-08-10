@@ -65,6 +65,7 @@ const getUuidController = (req, res, next, config) => {
 //POST CONTROLLER
 const postVacationsController = (req, res, next, config) => {
     const conn = mysql.start(config);
+    console.log('desde controller')
     postVacationModel({ ...req.body, conn })
         .then(response => {
             const result = {
