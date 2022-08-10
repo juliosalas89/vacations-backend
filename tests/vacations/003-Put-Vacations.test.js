@@ -46,3 +46,22 @@ test('--------------- Endpoint: PUT /vacation/:uuid ------------', assert => {
         assert.end();
     })
 })
+
+test('--------------Endpoint: PUT /vacation/:uuid (404 - Not Found -)-------', assert => {
+    const expectedCode = 404;
+    const messageForExpectedCode =  `Status code should be ${expectedCode}`;
+
+    request(app)
+    .put('/vacations/anyId123456')
+    .expect(expectedCode)
+    .then(()=> {
+        assert.pass(messageForExpectedCode)
+    })
+    .catch(err => {
+        assert.fail(err.message);
+    })
+    .finally(()=> {
+        server.close();
+        assert.end();
+    })
+})

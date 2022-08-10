@@ -2,8 +2,7 @@ import test from 'tape';
 import request from 'supertest';
 import { app, server } from '../../src';
 
-
-test('--------------- Endpoint: PUT /vacation/:uuid ------------', assert => {
+test('--------------- Endpoint: DELETE /vacation/:uuid ------------', assert => {
     const expectedCode = 204;
     const messageForExpectedCode = `Status code should be ${expectedCode}`;
     const expectedDeletedCode = 404;
@@ -41,6 +40,25 @@ test('--------------- Endpoint: PUT /vacation/:uuid ------------', assert => {
     })
     .catch(err => {
         assert.fail(err.message)
+    })
+    .finally(()=> {
+        server.close();
+        assert.end();
+    })
+})
+
+test('--------------Endpoint: DELETE /vacation/:uuid (422 - No Content -)-------', assert => {
+    const expectedCode = 204;
+    const messageForExpectedCode =  `Status code should be ${expectedCode}`;
+
+    request(app)
+    .delete('/vacation/anyId123456')
+    .expect(expectedCode)
+    .then(()=> {
+        assert.pass(messageForExpectedCode)
+    })
+    .catch(err => {
+        assert.fail(err.message);
     })
     .finally(()=> {
         server.close();

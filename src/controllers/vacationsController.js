@@ -65,7 +65,6 @@ const getUuidController = (req, res, next, config) => {
 //POST CONTROLLER
 const postVacationsController = (req, res, next, config) => {
     const conn = mysql.start(config);
-    console.log('desde controller')
     postVacationModel({ ...req.body, conn })
         .then(vacations => {
             const result = {
@@ -91,6 +90,7 @@ const deleteVacationController = (req, res, next, config) => {
             next(result);
         })
         .catch((err) => {
+            console.log('desde DELETE error')
             const error = errorHandler(err, config.environment);
             res.status(error.code).json(error);
         })
