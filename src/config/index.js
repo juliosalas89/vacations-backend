@@ -8,5 +8,3 @@ const configuration = (app) => {
 }
 
 export default configuration;
-
-//TOSEE: env variables, how to use them, how they work, how they change depending of the enviroment
