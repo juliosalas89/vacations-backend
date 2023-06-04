@@ -4,7 +4,7 @@ export default {
     bodyLimit: '300kb',
     db: {
         host: 'localhost',
-        user: 'root',
-        password: '3397'
+        user: '',
+        password: ''
     }
 }
