@@ -1,3 +1,15 @@
+### This is the backend of a vacations-review application.
+# This simple proyect was developed for practicing relational DB in MySQL with no ORM.
+Some technologies used:
+1- Express
+2- Babel
+3- Nodemon
+4- mysql
+5- express-validator
+6- supertest
+7- tape
+
+
 ### index controller
 # Method: GET -- Route: /
 GET: response "Server up!"
