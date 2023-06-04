@@ -1,5 +1,5 @@
 ### This is the backend of a vacations-review application.
-# This simple proyect was developed for practicing relational DB in MySQL with no ORM.
+# This simple project was developed for practicing relational DB in MySQL without ORM.
 Some technologies used:
 1- Express
 2- Babel
